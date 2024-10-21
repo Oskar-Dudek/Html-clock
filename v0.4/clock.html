@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clock v0.4</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #e0f7fa;
+        }
+        .clock-container {
+            text-align: center;
+            background-color: #333;
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            width: 300px;
+        }
+        .time {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+        .date {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .switch {
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .switch input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .switch label {
+            cursor: pointer;
+            width: 60px;
+            height: 30px;
+            background-color: #ccc;
+            display: inline-block;
+            border-radius: 30px;
+            position: relative;
+        }
+        .switch label::before {
+            content: "";
+            position: absolute;
+            height: 26px;
+            width: 26px;
+            border-radius: 50%;
+            background-color: white;
+            top: 2px;
+            left: 2px;
+            transition: 0.4s;
+        }
+        .switch input:checked + label {
+            background-color: #2196F3;
+        }
+        .switch input:checked + label::before {
+            transform: translateX(30px);
+        }
+        .switch span {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container" id="clock">
+        <div class="time" id="time"></div>
+        <div class="date" id="date"></div>
+        <div class="switch">
+            <input type="checkbox" id="timeFormatSwitch">
+            <label for="timeFormatSwitch"></label>
+            <span>24-hour format</span>
+        </div>
+    </div>
+
+    <script>
+        let is24HourFormat = false;
+
+        // Function to toggle between 12-hour and 24-hour format
+        document.getElementById('timeFormatSwitch').addEventListener('change', (event) => {
+            is24HourFormat = event.target.checked;
+            updateClock();
+        });
+
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const formattedHours = is24HourFormat ? hours : (hours % 12 || 12);
+            const formattedMinutes = String(minutes).padStart(2, '0');
+            const formattedSeconds = String(seconds).padStart(2, '0');
+
+            const timeString = is24HourFormat
+                ? `${String(formattedHours).padStart(2, '0')}:${formattedMinutes}:${formattedSeconds}`
+                : `${formattedHours}:${formattedMinutes}:${formattedSeconds} ${ampm}`;
+
+            // Update display
+            document.getElementById('time').textContent = timeString;
+
+            // Get current date
+            const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const monthsOfYear = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const dayOfWeek = daysOfWeek[now.getDay()];
+            const dayOfMonth = now.getDate();
+            const month = monthsOfYear[now.getMonth()];
+            const year = now.getFullYear();
+
+            const dateString = `${dayOfWeek}, ${month} ${dayOfMonth}, ${year}`;
+            
+            // Update the date display
+            document.getElementById('date').textContent = dateString;
+        }
+
+        // Update time
+        setInterval(updateClock, 1000);
+        updateClock(); // Initialize
+    </script>
+</body>
+</html>
